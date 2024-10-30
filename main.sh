@@ -53,7 +53,7 @@ function print_error() {
 function print_success() {
     if [[ 0 -eq $? ]]; then
 		echo -e "${Green} ============================================ ${FONT}"
-        echo -e "${Green} # $1 Successfully installed"
+        echo -e "${Green} # $1 Instalado exitosamente"
 		echo -e "${Green} ============================================ ${FONT}"
         sleep 2
     fi
@@ -62,9 +62,9 @@ function print_success() {
 ### Check root
 function is_root() {
     if [[ 0 == "$UID" ]]; then
-        print_ok "Root user Start installation process"
+        print_ok "Usuario Root es necesario en la instalacion"
     else
-        print_error "The current user is not the root user, please switch to the root user and run the script again"
+        print_error "El usuario actual no es el usuario root; cambie al usuario root y ejecute el script nuevamente"
     fi
 
 }
@@ -86,7 +86,7 @@ function first_setup(){
 function base_package() {
     sudo apt-get autoremove -y man-db apache2 ufw exim4 firewalld snapd* -y
     clear
-    print_install "Install the required packages"
+    print_install "Instalando paquetes requeridos"
     sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1
     sysctl -w net.ipv6.conf.default.disable_ipv6=1  >/dev/null 2>&1
     sudo apt install software-properties-common -y
@@ -99,13 +99,13 @@ function base_package() {
     msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent \
     net-tools  jq openvpn easy-rsa python3-certbot-nginx p7zip-full tuned fail2ban -y
     apt-get clean all; sudo apt-get autoremove -y
-    print_ok "Successfully installed the required package"
+    print_ok "Se instalaron con exito los paquetes requeridos"
 }
 clear
 
 ### Create Xrays directory
 function dir_xray() {
-    print_install "Create Xrays directory"
+    print_install "Creando directorio X-ray"
     mkdir -p /etc/{xray,vmess,websocket,vless,trojan,shadowsocks}
     # mkdir -p /usr/sbin/xray/
     mkdir -p /var/log/xray/
@@ -125,7 +125,7 @@ function dir_xray() {
 ### Add domain
 function add_domain() {
     echo "`cat /etc/banner`"
-    read -rp "Input Your Domain For This Server :" -e SUB_DOMAIN
+    read -rp "Ingrese su dominio para este servidor:" -e SUB_DOMAIN
     echo "Host : $SUB_DOMAIN"
     echo $SUB_DOMAIN > /root/domain
     cp /root/domain /etc/xray/domain
@@ -133,7 +133,7 @@ function add_domain() {
 
 ### Install SSL
 function pasang_ssl() {
-    print_install "Installing SSL on the domain"
+    print_install "Instalando SSL en el dominio"
     domain=$(cat /root/domain)
     STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
     rm -rf /root/.acme.sh
